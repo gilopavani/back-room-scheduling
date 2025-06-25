@@ -1,35 +1,31 @@
 import express from "express";
 import cors from "cors";
 import config from "./config/config";
-import { sequelize, testConnection, syncDatabase } from "./database";
-// import routes from "./routes";
-// import morgan from "morgan";
+import { sequelize } from "./database";
+import router from "./routes/routes";
+import { errorHandler } from "./utils/error-handler";
 
 const app = express();
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
-// app.use(morgan("dev")); // log das requisições (útil para testes)
+app.use(express.urlencoded({ extended: true }));
 
-// Rotas principais
-// app.use("/api", routes);
-app.use("/check", (req, res) => {
-  res.status(200).json({ message: "Servidor está funcionando!" });
-});
+app.use("/api", router);
+app.use(errorHandler);
 
-// Testa conexão com o banco e inicia o servidor
 const startServer = async () => {
   try {
-    await testConnection();
-    await syncDatabase(); // use syncDatabase(true) para recriar as tabelas
+    await sequelize.authenticate();
+    console.log("✅ Conexão com o banco de dados estabelecida com sucesso.");
 
     app.listen(config.port, () => {
-      console.log(`🚀 Servidor rodando em http://localhost:${config.port}`);
+      console.log(`🚀 Servidor rodando na porta ${config.port}`);
       console.log(`🌍 Ambiente: ${config.nodeEnv}`);
     });
   } catch (error) {
-    console.error("🔴 Erro ao iniciar servidor:", error);
+    console.error("❌ Erro ao conectar com o banco de dados:", error);
     process.exit(1);
   }
 };
