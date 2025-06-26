@@ -3,6 +3,7 @@ import UserPassword from "./UserPassword";
 import Address from "./Address";
 import Room from "./Room";
 import Booking from "./Booking";
+import Log from "./Log";
 
 User.hasOne(UserPassword, {
   foreignKey: "userId",
@@ -46,7 +47,17 @@ Booking.belongsTo(Room, {
   as: "room",
 });
 
-export { User, UserPassword, Address, Room, Booking };
+User.hasMany(Log, {
+  foreignKey: "userId",
+  as: "logs",
+});
+
+Log.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+export { User, UserPassword, Address, Room, Booking, Log };
 
 export default {
   User,
@@ -54,4 +65,5 @@ export default {
   Address,
   Room,
   Booking,
+  Log,
 };
