@@ -4,7 +4,7 @@ import { sequelize } from "../index";
 interface LogAttributes {
   id: string;
   userId: string;
-  module: "auth" | "me" | "booking" | "user" | "room";
+  module: "account" | "booking";
   activity: string;
   details?: string;
   ipAddress?: string;
@@ -21,7 +21,7 @@ class Log
 {
   public id!: string;
   public userId!: string;
-  public module!: "auth" | "me" | "booking" | "user" | "room";
+  public module!: "account" | "booking";
   public activity!: string;
   public details?: string;
   public ipAddress?: string;
@@ -43,7 +43,7 @@ Log.init(
       field: "user_id",
     },
     module: {
-      type: DataTypes.ENUM("auth", "booking", "user", "room"),
+      type: DataTypes.ENUM("account", "booking"),
       allowNull: false,
     },
     activity: {

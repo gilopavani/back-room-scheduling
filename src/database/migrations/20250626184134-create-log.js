@@ -20,7 +20,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       module: {
-        type: Sequelize.ENUM("auth", "booking", "user", "room"),
+        type: Sequelize.ENUM("account", "booking"),
         allowNull: false,
       },
       activity: {

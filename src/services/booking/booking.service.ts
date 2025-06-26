@@ -5,6 +5,7 @@ import { RoomInterface } from "../../interfaces/room.interface";
 import roomRepo from "../../modules/room/room.repo";
 import { createBookingValidator } from "../../modules/booking/booking.validator";
 import userRepo from "../../modules/user/user.repo";
+import LogService from "../log/log.service";
 
 const getAvailableSlots = (
   room: RoomInterface,
@@ -180,11 +181,102 @@ export const createBookingService = async (
     }
     bookingData.status = "pending";
     const newBooking = await bookingRepo.createBooking(bookingData);
+    LogService.logActivity(
+      user.id,
+      "booking",
+      "Criação de agendamento",
+      `Booking created for room ${room.number} on ${date} at ${bookingData.time}`,
+      undefined
+    );
     return newBooking;
   } catch (error) {
     if (error instanceof CustomError) {
       throw error;
     }
     throw new CustomError("Failed to create booking", 500);
+  }
+};
+
+export const cancellationBookingService = async (
+  bookingId: string,
+  userId: string
+): Promise<{ status: string }> => {
+  try {
+    if (!bookingId) {
+      throw new CustomError("Booking ID is required", 400);
+    }
+
+    if (!userId) {
+      throw new CustomError("User ID is required", 400);
+    }
+    const user = await userRepo.findUserById(userId);
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+
+    const booking = await bookingRepo.findBookingById(bookingId);
+    if (!booking) {
+      throw new CustomError("Booking not found", 404);
+    }
+    if (user.role === "user" && booking.userId !== userId) {
+      throw new CustomError(
+        "You do not have permission to cancel this booking",
+        403
+      );
+    }
+    if (booking.status === "cancelled") {
+      throw new CustomError("Booking is already cancelled", 400);
+    }
+    booking.status = "cancelled";
+    await bookingRepo.updateBooking(bookingId, booking);
+    LogService.logActivity(
+      booking.userId,
+      "booking",
+      "Cancelamento de agendamento",
+      `Booking with ID ${bookingId} has been canceled`,
+      undefined
+    );
+    return { status: "cancelled" };
+  } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
+    throw new CustomError("Failed to cancel booking", 500);
+  }
+};
+
+export const confirmBookingService = async (
+  bookingId: string
+): Promise<{ status: string }> => {
+  try {
+    if (!bookingId) {
+      throw new CustomError("Booking ID is required", 400);
+    }
+
+    const booking = await bookingRepo.findBookingById(bookingId);
+    if (!booking) {
+      throw new CustomError("Booking not found", 404);
+    }
+    if (booking.status !== "pending") {
+      throw new CustomError("Booking is not in pending status", 400);
+    }
+    booking.status = "confirmed";
+    const updatedBooking = await bookingRepo.updateBooking(bookingId, booking);
+    LogService.logActivity(
+      booking.userId,
+      "booking",
+      "Confirmação de agendamento",
+      `Booking with ID ${bookingId} has been confirmed`,
+      undefined
+    );
+    if (!updatedBooking) {
+      throw new CustomError("Failed to update booking status", 500);
+    }
+    return { status: "confirmed" };
+  } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
+    throw new CustomError("Failed to confirm booking", 500);
   }
 };

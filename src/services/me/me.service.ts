@@ -2,6 +2,7 @@ import { hash } from "bcrypt";
 import { EditUser } from "../../interfaces/User.interface";
 import userRepo from "../../modules/user/user.repo";
 import { CustomError } from "../../utils/custom-error";
+import LogService from "../log/log.service";
 
 export const getProfileService = async (userId: string) => {
   try {
@@ -50,6 +51,12 @@ export const updateProfileService = async (
     if (!updatedUser) {
       throw new CustomError("Failed to update user profile", 404);
     }
+    LogService.logActivity(
+      userId,
+      "account",
+      "Atualizar perfil",
+      `User ${updatedUser.user.email} updated their profile successfully`
+    );
     return updatedUser;
   } catch (error) {
     throw new CustomError("Failed to update user profile", 500);

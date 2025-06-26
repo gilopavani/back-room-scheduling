@@ -8,6 +8,7 @@ import {
   validateSignUp,
 } from "../../modules/auth/auth.validator";
 import { generateJWT } from "../../middlewares/jwt.service";
+import LogService from "../log/log.service";
 
 export const signUpService = async (userData: SignUp) => {
   const { error } = validateSignUp(userData);
@@ -37,6 +38,13 @@ export const signUpService = async (userData: SignUp) => {
     canViewLogs: newUser.canViewLogs,
     canManageScheduling: newUser.canManageScheduling,
   };
+  LogService.logActivity(
+    newUser.id,
+    "account",
+    "Criar conta",
+    `User ${newUser.email} signed up successfully`,
+    undefined
+  );
   const accessToken = await generateJWT(
     payload,
     config.JWT_ACCESS_TOKEN_SECRET as string
@@ -75,6 +83,14 @@ export const signInService = async (userData: Auth) => {
     canViewLogs: user.canViewLogs,
     canManageScheduling: user.canManageScheduling,
   };
+
+  LogService.logActivity(
+    user.id,
+    "account",
+    "Login",
+    `User ${user.email} signed in successfully`,
+    undefined
+  );
 
   const accessToken = await generateJWT(
     payload,

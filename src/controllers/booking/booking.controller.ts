@@ -5,6 +5,8 @@ import {
   createBookingService,
   getBookingsByUserIdService,
   getFreeBookingByRoomIdandDateService,
+  cancellationBookingService,
+  confirmBookingService,
 } from "../../services/booking/booking.service";
 
 export const getAllBookingsController = async (
@@ -73,6 +75,41 @@ export const getBookingsByUserIdController = async (
     const { userId } = req.params;
     const bookings = await getBookingsByUserIdService(userId);
     res.status(200).json(bookings);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const cancellationBookingController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { bookingId } = req.params;
+    const userId = req.context?.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+    const cancelledBooking = await cancellationBookingService(
+      bookingId,
+      userId
+    );
+    res.status(200).json(cancelledBooking);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const confirmBookingController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { bookingId } = req.params;
+    const confirmedBooking = await confirmBookingService(bookingId);
+    res.status(200).json(confirmedBooking);
   } catch (error) {
     next(error);
   }

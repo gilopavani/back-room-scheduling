@@ -1,7 +1,7 @@
 export interface LogInterface {
   id?: string;
   userId: string;
-  module: "auth" | "me" | "booking" | "user" | "room";
+  module: "account" | "booking";
   activity: string;
   details?: string;
   ipAddress?: string;
@@ -11,7 +11,7 @@ export interface LogInterface {
 
 export interface CreateLog {
   userId: string;
-  module: "auth" | "me" | "booking" | "user" | "room";
+  module: "account" | "booking";
   activity: string;
   details?: string;
   ipAddress?: string;

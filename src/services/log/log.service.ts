@@ -14,7 +14,7 @@ class LogService {
 
   static async logActivity(
     userId: string,
-    module: "auth" | "me" | "booking" | "user" | "room",
+    module: "account" | "booking",
     activity: string,
     details?: string,
     req?: Request
@@ -24,8 +24,6 @@ class LogService {
       module,
       activity,
       details,
-      ipAddress: req?.ip || req?.connection?.remoteAddress,
-      userAgent: req?.get("User-Agent"),
     };
 
     await this.createLog(logData);

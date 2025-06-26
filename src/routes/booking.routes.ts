@@ -10,6 +10,8 @@ import {
   getFreeBookingByRoomIdController,
   getBookingByRoomIdAndDateController,
   getBookingsByUserIdController,
+  cancellationBookingController,
+  confirmBookingController,
 } from "../controllers/booking/booking.controller";
 
 const router = express.Router();
@@ -51,6 +53,24 @@ router.get(
   requirePermission("scheduling"),
   async (req, res, next) => {
     getBookingsByUserIdController(req, res, next);
+  }
+);
+
+router.post(
+  "/cancel/:bookingId",
+  authMiddleware,
+  requirePermission("scheduling"),
+  async (req, res, next) => {
+    cancellationBookingController(req, res, next);
+  }
+);
+
+router.post(
+  "/confirm/:bookingId",
+  authMiddleware,
+  requireAdmin,
+  async (req, res, next) => {
+    confirmBookingController(req, res, next);
   }
 );
 
