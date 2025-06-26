@@ -4,9 +4,9 @@ import { sequelize } from "../index";
 interface RoomAttributes {
   id: string;
   number: string;
-  startTime: string; // ISO 8601 format
-  endTime: string; // ISO 8601 format
-  timeBlock: number; // in minutes
+  startTime: string;
+  endTime: string;
+  timeBlock: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -38,14 +38,17 @@ Room.init(
     startTime: {
       type: DataTypes.STRING,
       allowNull: false,
+      field: "start_time",
     },
     endTime: {
       type: DataTypes.STRING,
       allowNull: false,
+      field: "end_time",
     },
     timeBlock: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      field: "time_block",
     },
   },
   {

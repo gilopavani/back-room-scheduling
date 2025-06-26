@@ -20,8 +20,12 @@ export const signUpService = async (userData: SignUp) => {
     throw new CustomError("User already exists", 409);
   }
 
+  if (userData.password && userData.password.length < 6) {
+    throw new CustomError("Password must be at least 6 characters long", 400);
+  }
+
   const passwordHash = await hash(userData.password, 10);
-  userData.user.role = "user"; // Default role for new users
+  userData.user.role = "user";
   const newUser = await authRepo.createUser(userData, passwordHash);
   if (!newUser) {
     throw new CustomError("User creation failed", 500);
@@ -37,7 +41,7 @@ export const signUpService = async (userData: SignUp) => {
     payload,
     config.JWT_ACCESS_TOKEN_SECRET as string
   );
-  return { user: newUser, accessToken };
+  return { accessToken };
 };
 
 export const signInService = async (userData: Auth) => {
@@ -77,5 +81,5 @@ export const signInService = async (userData: Auth) => {
     config.JWT_ACCESS_TOKEN_SECRET as string
   );
 
-  return { user, accessToken };
+  return { accessToken };
 };

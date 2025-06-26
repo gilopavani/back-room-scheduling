@@ -12,7 +12,6 @@ export const singUpController = async (
     const response = await signUpService(userData);
     res.status(201).json({
       message: "Successfully signed up",
-      data: response.user,
       accessToken: response.accessToken,
     });
   } catch (error) {
@@ -31,7 +30,6 @@ export const signInController = async (
     const response = await signInService(userData);
     res.status(200).json({
       message: "Successfully signed in",
-      data: response.user,
       accessToken: response.accessToken,
     });
   } catch (error) {

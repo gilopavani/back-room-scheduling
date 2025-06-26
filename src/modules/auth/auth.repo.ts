@@ -51,6 +51,8 @@ const authRepo = {
     try {
       const data = userData.user as CreateUser;
       data.role = "user";
+      data.status = "active";
+      data.email = data.email.toLowerCase();
       const user = await User.create(data, { transaction });
       await UserPassword.create(
         { userId: user.id, passwordHash: hashPass },

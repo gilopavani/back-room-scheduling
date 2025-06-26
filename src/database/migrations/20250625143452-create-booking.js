@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      userId: {
+      user_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
@@ -28,7 +28,7 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      roomId: {
+      room_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
@@ -43,12 +43,12 @@ module.exports = {
         allowNull: false,
         defaultValue: "pending",
       },
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
@@ -56,7 +56,7 @@ module.exports = {
     });
     await queryInterface.addIndex(
       "bookings",
-      ["date", "time", "userId", "roomId"],
+      ["date", "time", "user_id", "room_id"],
       {
         unique: true,
         name: "bookings_unique_date_time_user_room",

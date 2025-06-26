@@ -3,10 +3,10 @@ import { sequelize } from "../index";
 
 interface BookingAttributes {
   id: string;
-  date: string; // ISO 8601 format
-  time: string; // ISO 8601 format
-  userId: string; // Foreign key to User
-  roomId: string; // Foreign key to Room
+  date: Date;
+  time: string;
+  userId: string;
+  roomId: string;
   status: "pending" | "confirmed" | "cancelled";
   createdAt?: Date;
   updatedAt?: Date;
@@ -17,7 +17,7 @@ class Booking
   implements BookingAttributes
 {
   public id!: string;
-  public date!: string;
+  public date!: Date;
   public time!: string;
   public userId!: string;
   public roomId!: string;
@@ -44,10 +44,12 @@ Booking.init(
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
+      field: "user_id",
     },
     roomId: {
       type: DataTypes.UUID,
       allowNull: false,
+      field: "room_id",
     },
     status: {
       type: DataTypes.ENUM("pending", "confirmed", "cancelled"),

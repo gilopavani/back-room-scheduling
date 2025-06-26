@@ -1,16 +1,9 @@
+import { hash } from "bcrypt";
+import { EditUser } from "../../interfaces/User.interface";
 import userRepo from "../../modules/user/user.repo";
-import { validatePermission } from "../../modules/user/user.validator";
 import { CustomError } from "../../utils/custom-error";
-export const getAllUsersService = async () => {
-  try {
-    const users = await userRepo.getAllUsers();
-    return users;
-  } catch (error) {
-    throw new CustomError("Failed to retrieve users", 500);
-  }
-};
 
-export const getUserByIdService = async (userId: string) => {
+export const getProfileService = async (userId: string) => {
   try {
     if (!userId) {
       throw new CustomError("User ID is required", 400);
@@ -21,11 +14,11 @@ export const getUserByIdService = async (userId: string) => {
     }
     return user;
   } catch (error) {
-    throw new CustomError("Failed to retrieve user", 500);
+    throw new CustomError("Failed to retrieve user profile", 500);
   }
 };
 
-export const getUserPermissionsService = async (userId: string) => {
+export const getPermissionsService = async (userId: string) => {
   try {
     if (!userId) {
       throw new CustomError("User ID is required", 400);
@@ -40,27 +33,25 @@ export const getUserPermissionsService = async (userId: string) => {
   }
 };
 
-export const updateUserPermissionsService = async (
+export const updateProfileService = async (
   userId: string,
-  permissions: {
-    canViewLogs?: boolean;
-    canManageScheduling?: boolean;
-  }
+  userData: EditUser
 ) => {
   try {
     if (!userId) {
       throw new CustomError("User ID is required", 400);
     }
-    const { error } = validatePermission({ permissions });
-    if (error) {
-      throw new CustomError(error.message, 400);
+    if (userData.password && userData.password.length < 6) {
+      throw new CustomError("Password must be at least 6 characters long", 400);
     }
-    const updatedUser = await userRepo.editUserPermissions(userId, permissions);
+    const passwordHash = await hash(userData.password, 10);
+    userData.password = passwordHash;
+    const updatedUser = await userRepo.updateUserProfile(userId, userData);
     if (!updatedUser) {
-      throw new CustomError("Failed to update user permissions", 404);
+      throw new CustomError("Failed to update user profile", 404);
     }
     return updatedUser;
   } catch (error) {
-    throw new CustomError("Failed to update user permissions", 500);
+    throw new CustomError("Failed to update user profile", 500);
   }
 };

@@ -14,24 +14,24 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      startTime: {
+      start_time: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      endTime: {
+      end_time: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      timeBlock: {
+      time_block: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,

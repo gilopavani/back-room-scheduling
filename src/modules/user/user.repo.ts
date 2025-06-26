@@ -1,6 +1,7 @@
 import {
   User as UserInterface,
   UserAddress,
+  EditUser,
 } from "../../interfaces/User.interface";
 import { User, UserPassword, Address } from "../../database/models";
 import { Transaction } from "sequelize";
@@ -22,8 +23,8 @@ const userRepo = {
       where: { email },
       include: [
         {
-          model: UserPassword,
-          as: "password",
+          model: Address,
+          as: "address",
         },
       ],
     });
@@ -33,8 +34,8 @@ const userRepo = {
     return await User.findByPk(id, {
       include: [
         {
-          model: UserPassword,
-          as: "password",
+          model: Address,
+          as: "address",
         },
       ],
     });
@@ -56,7 +57,6 @@ const userRepo = {
     if (!user) {
       return null;
     }
-    console.log("Editing permissions for user:", userId, user);
     if (user.role === "admin") {
       throw new Error("Cannot edit permissions for admin users");
     }
@@ -83,6 +83,70 @@ const userRepo = {
         },
       ],
     });
+  },
+
+  updateUserProfile: async (
+    userId: string,
+    userData: EditUser
+  ): Promise<{
+    user: User;
+    address?: Address;
+  } | null> => {
+    const sequelize = User.sequelize;
+    const transaction: Transaction = await sequelize!.transaction();
+    try {
+      const user = await User.findByPk(userId, { transaction });
+      if (!user) {
+        return null;
+      }
+      user.name = userData.user.name || user.name;
+      user.lastName = userData.user.lastName || user.lastName;
+      user.email = userData.user.email;
+      await user.save({ transaction });
+      let updatedAddress: Address | undefined;
+      if (userData.address) {
+        const address = await Address.findOne({
+          where: { userId: user.id },
+          transaction,
+        });
+        if (address) {
+          address.cep = userData.address.cep || address.cep;
+          address.number = userData.address.number || address.number;
+          address.street = userData.address.street || address.street;
+          address.neighborhood =
+            userData.address.neighborhood || address.neighborhood;
+          address.city = userData.address.city || address.city;
+          address.state = userData.address.state || address.state;
+          await address.save({ transaction });
+          updatedAddress = address;
+        }
+      }
+      if (userData.password) {
+        const userPassword = await UserPassword.findOne({
+          where: { userId: user.id },
+          transaction,
+        });
+        if (userPassword) {
+          userPassword.passwordHash = userData.password;
+          await userPassword.save({ transaction });
+        }
+      }
+      const updatedUser: {
+        user: User;
+        address?: Address;
+      } = {
+        user,
+        address: updatedAddress,
+      };
+      await transaction.commit();
+      return updatedUser;
+    } catch (error) {
+      if (sequelize) {
+        const transaction: Transaction = await sequelize.transaction();
+        await transaction.rollback();
+      }
+      throw error;
+    }
   },
 };
 

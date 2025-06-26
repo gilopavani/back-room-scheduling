@@ -7,8 +7,8 @@ interface User {
   email: string;
   role?: "user" | "admin";
   status: "active" | "inactive";
-  canViewLogs: boolean;
-  canManageScheduling: boolean;
+  canViewLogs?: boolean;
+  canManageScheduling?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -45,4 +45,10 @@ interface UserAddress {
   updatedAt?: Date;
 }
 
-export { User, UserAddress, CreateUser };
+interface EditUser {
+  user: User;
+  address: Address;
+  password: string;
+}
+
+export { User, UserAddress, CreateUser, EditUser };
