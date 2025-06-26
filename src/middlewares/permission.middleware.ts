@@ -7,20 +7,20 @@ type Permission = "logs" | "scheduling";
 export const requirePermission = (permission: Permission) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.context?.sub;
+      const userId = req.context?.userId;
 
       if (!userId) {
-        throw new CustomError("Token inválido", 401);
+        throw new CustomError("Invalid token", 401);
       }
 
       const user = await User.findByPk(userId);
 
       if (!user) {
-        throw new CustomError("Usuário não encontrado", 404);
+        throw new CustomError("User not found", 404);
       }
 
       if (!user.hasPermission(permission)) {
-        throw new CustomError("Acesso negado: permissão insuficiente", 403);
+        throw new CustomError("Access denied: Insufficient permissions", 403);
       }
 
       req.user = user;
@@ -37,16 +37,16 @@ export const requireAdmin = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.context?.sub;
+    const userId = req.context?.userId;
 
     if (!userId) {
-      throw new CustomError("Token inválido", 401);
+      throw new CustomError("Invalid token", 401);
     }
 
     const user = await User.findByPk(userId);
 
     if (!user || user.role !== "admin") {
-      throw new CustomError("Acesso negado: apenas administradores", 403);
+      throw new CustomError("Access denied: Administrators only", 403);
     }
 
     req.user = user;

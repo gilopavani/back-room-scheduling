@@ -1,6 +1,9 @@
 import { User, UserPassword, Address } from "../../database/models";
 import { SignUp } from "../../interfaces/Auth.interface";
-import { User as UserInterface } from "../../interfaces/User.interface";
+import {
+  CreateUser,
+  User as UserInterface,
+} from "../../interfaces/User.interface";
 import { Transaction } from "sequelize";
 
 const authRepo = {
@@ -46,7 +49,9 @@ const authRepo = {
     const sequelize = User.sequelize;
     const transaction: Transaction = await sequelize!.transaction();
     try {
-      const user = await User.create(userData.user, { transaction });
+      const data = userData.user as CreateUser;
+      data.role = "user";
+      const user = await User.create(data, { transaction });
       await UserPassword.create(
         { userId: user.id, passwordHash: hashPass },
         { transaction }

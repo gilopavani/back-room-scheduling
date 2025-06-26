@@ -16,7 +16,9 @@ export const validateSignUp = (userData: SignUp) => {
       name: z.string().min(1, "Name is required"),
       lastName: z.string().min(1, "Last name is required"),
       email: z.email("Invalid email format"),
-      role: z.enum(["user", "admin"], "Role must be either 'user' or 'admin'"),
+      role: z
+        .enum(["user", "admin"], "Role must be either 'user' or 'admin'")
+        .optional(),
       status: z.enum(
         ["active", "inactive"],
         "Status must be either 'active' or 'inactive'"

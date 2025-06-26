@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert("users", [
       {
-        id: "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
+        id: "20ca4c0a-7c69-4168-b186-5758e9c77668",
         name: "Admin",
         last_name: "User",
         email: "admin@gmail.com",
@@ -20,8 +20,10 @@ module.exports = {
 
     await queryInterface.bulkInsert("user_passwords", [
       {
-        user_id: "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
-        password: "$2b$10$EIXjYz5Zy5Zy5Zy5Zy5ZyOeXxYz5Zy5Zy5Zy5Zy5Zy5Zy5Zy5Zy",
+        id: "26da4aaf-defb-4cdc-ad49-cc128135958d",
+        user_id: "20ca4c0a-7c69-4168-b186-5758e9c77668",
+        password_hash:
+          "$2b$10$4ZZfT0qZWrm.B.0pKoppfe//KDm76jUQtzfPIS6gSKXjdZO4D9r/i",
         created_at: new Date(),
         updated_at: new Date(),
       },

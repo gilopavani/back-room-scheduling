@@ -5,37 +5,69 @@ import {
   requireAdmin,
 } from "../middlewares/permission.middleware";
 import { PermissionService } from "../services/permission.service";
+import {
+  getAllUsersController,
+  getUserByIdController,
+  getUserPermissionsController,
+  updateUserPermissionsController,
+} from "../controllers/user/user.controller";
 
 const router = express.Router();
 
-router.get("/logs", authMiddleware, requirePermission("logs"), (req, res) => {
-  res.json({ message: "Logs acessíveis" });
+router.get("", authMiddleware, requireAdmin, async (req, res, next) => {
+  getAllUsersController(req, res, next);
+});
+
+router.get("/:userId", authMiddleware, requireAdmin, async (req, res, next) => {
+  getUserByIdController(req, res, next);
 });
 
 router.get(
-  "/scheduling",
-  authMiddleware,
-  requirePermission("scheduling"),
-  (req, res) => {
-    res.json({ message: "Agendamentos acessíveis" });
-  }
-);
-
-router.post(
-  "/permissions/:userId/grant",
+  "/:userId/permissions",
   authMiddleware,
   requireAdmin,
   async (req, res, next) => {
-    try {
-      const { userId } = req.params;
-      const { permission } = req.body;
-
-      await PermissionService.grantPermission(userId, permission);
-      res.json({ message: "Permissão concedida com sucesso" });
-    } catch (error) {
-      next(error);
-    }
+    getUserPermissionsController(req, res, next);
   }
 );
+
+router.patch(
+  "/:userId/permissions",
+  authMiddleware,
+  requireAdmin,
+  async (req, res, next) => {
+    updateUserPermissionsController(req, res, next);
+  }
+);
+
+// router.get("/logs", authMiddleware, requirePermission("logs"), (req, res) => {
+//   res.json({ message: "Logs acessíveis" });
+// });
+
+// router.get(
+//   "/scheduling",
+//   authMiddleware,
+//   requirePermission("scheduling"),
+//   (req, res) => {
+//     res.json({ message: "Agendamentos acessíveis" });
+//   }
+// );
+
+// router.post(
+//   "/permissions/:userId/grant",
+//   authMiddleware,
+//   requireAdmin,
+//   async (req, res, next) => {
+//     try {
+//       const { userId } = req.params;
+//       const { permission } = req.body;
+
+//       await PermissionService.grantPermission(userId, permission);
+//       res.json({ message: "Permissão concedida com sucesso" });
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
 
 export default router;

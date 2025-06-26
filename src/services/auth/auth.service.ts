@@ -3,7 +3,10 @@ import { CustomError } from "../../utils/custom-error";
 import config from "../../config/config";
 import { compareSync, hash } from "bcrypt";
 import authRepo from "../../modules/auth/auth.repo";
-import { validateSignIn, validateSignUp } from "./auth.validator";
+import {
+  validateSignIn,
+  validateSignUp,
+} from "../../modules/auth/auth.validator";
 import { generateJWT } from "../../middlewares/jwt.service";
 
 export const signUpService = async (userData: SignUp) => {
@@ -18,6 +21,7 @@ export const signUpService = async (userData: SignUp) => {
   }
 
   const passwordHash = await hash(userData.password, 10);
+  userData.user.role = "user"; // Default role for new users
   const newUser = await authRepo.createUser(userData, passwordHash);
   if (!newUser) {
     throw new CustomError("User creation failed", 500);

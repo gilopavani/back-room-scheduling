@@ -1,6 +1,8 @@
 import User from "./User";
 import UserPassword from "./UserPassword";
 import Address from "./Address";
+import Room from "./Room";
+import Booking from "./Booking";
 
 User.hasOne(UserPassword, {
   foreignKey: "userId",
@@ -24,10 +26,32 @@ Address.belongsTo(User, {
   constraints: false,
 });
 
-export { User, UserPassword, Address };
+User.hasMany(Booking, {
+  foreignKey: "userId",
+  as: "bookings",
+});
+
+Booking.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+Room.hasMany(Booking, {
+  foreignKey: "roomId",
+  as: "bookings",
+});
+
+Booking.belongsTo(Room, {
+  foreignKey: "roomId",
+  as: "room",
+});
+
+export { User, UserPassword, Address, Room, Booking };
 
 export default {
   User,
   UserPassword,
   Address,
+  Room,
+  Booking,
 };
