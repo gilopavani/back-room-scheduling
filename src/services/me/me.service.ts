@@ -3,6 +3,8 @@ import { EditUser } from "../../interfaces/User.interface";
 import userRepo from "../../modules/user/user.repo";
 import { CustomError } from "../../utils/custom-error";
 import LogService from "../log/log.service";
+import bookingRepo from "../../modules/booking/booking.repo";
+import logRepo from "../../modules/logs/logs.repo";
 
 export const getProfileService = async (userId: string) => {
   try {
@@ -60,5 +62,30 @@ export const updateProfileService = async (
     return updatedUser;
   } catch (error) {
     throw new CustomError("Failed to update user profile", 500);
+  }
+};
+
+export const getBookingsByUserIdService = async (userId: string) => {
+  try {
+    if (!userId) {
+      throw new CustomError("User ID is required", 400);
+    }
+    const bookings = await bookingRepo.findBookingsByUserId(userId);
+
+    return bookings;
+  } catch (error) {
+    throw new CustomError("Failed to retrieve bookings by user ID", 500);
+  }
+};
+
+export const getLogsByUserIdService = async (userId: string) => {
+  try {
+    if (!userId) {
+      throw new CustomError("User ID is required", 400);
+    }
+    const logs = await logRepo.getLogsByUserId(userId);
+    return logs;
+  } catch (error) {
+    throw new CustomError("Failed to retrieve user logs", 500);
   }
 };

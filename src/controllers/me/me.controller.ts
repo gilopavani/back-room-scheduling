@@ -3,6 +3,8 @@ import {
   updateProfileService,
   getPermissionsService,
   getProfileService,
+  getBookingsByUserIdService,
+  getLogsByUserIdService,
 } from "../../services/me/me.service";
 import { CustomError } from "../../utils/custom-error";
 
@@ -56,6 +58,42 @@ export const updateProfileController = async (
     }
     const updatedUser = await updateProfileService(userId, userData);
     res.status(200).json({ updatedUser });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getBookingsByUserIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.context?.userId;
+
+    if (!userId) {
+      throw new CustomError("User ID is required", 400);
+    }
+    const bookings = await getBookingsByUserIdService(userId);
+    res.status(200).json({ bookings });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLogsByUserIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.context?.userId;
+
+    if (!userId) {
+      throw new CustomError("User ID is required", 400);
+    }
+    const logs = await getLogsByUserIdService(userId);
+    res.status(200).json({ logs });
   } catch (error) {
     next(error);
   }

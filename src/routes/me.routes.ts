@@ -4,7 +4,10 @@ import {
   getProfileController,
   getPermissionsController,
   updateProfileController,
+  getBookingsByUserIdController,
+  getLogsByUserIdController,
 } from "../controllers/me/me.controller";
+import { requirePermission } from "../middlewares/permission.middleware";
 
 const router = express.Router();
 
@@ -17,5 +20,21 @@ router.get("/permission", authMiddleware, async (req, res, next) => {
 router.patch("", authMiddleware, async (req, res, next) => {
   updateProfileController(req, res, next);
 });
+router.get(
+  "/bookings",
+  authMiddleware,
+  requirePermission("scheduling"),
+  async (req, res, next) => {
+    getBookingsByUserIdController(req, res, next);
+  }
+);
+router.get(
+  "/logs",
+  authMiddleware,
+  requirePermission("logs"),
+  async (req, res, next) => {
+    getLogsByUserIdController(req, res, next);
+  }
+);
 
 export default router;
