@@ -2,6 +2,7 @@ import { Request } from "express";
 import { LogInterface } from "../../interfaces/Log.interface";
 import logRepo from "../../modules/logs/logs.repo";
 import { CustomError } from "../../utils/custom-error";
+import { PaginationParams, FilterParams } from "../../utils/pagination";
 
 class LogService {
   static async createLog(logData: LogInterface): Promise<void> {
@@ -29,20 +30,34 @@ class LogService {
     await this.createLog(logData);
   }
 
-  static async getAllLogs(page: number = 1, limit: number = 50) {
+  static async getAllLogs(
+    paginationParams: PaginationParams,
+    filterParams: FilterParams
+  ) {
     try {
-      return await logRepo.getAllLogs(page, limit);
+      return await logRepo.getAllLogsWithPagination(
+        paginationParams,
+        filterParams
+      );
     } catch (error) {
       throw new CustomError("Failed to retrieve logs", 500);
     }
   }
 
-  static async getLogsByUserId(userId: string) {
+  static async getLogsByUserId(
+    userId: string,
+    paginationParams: PaginationParams,
+    filterParams: FilterParams
+  ) {
     try {
       if (!userId) {
         throw new CustomError("User ID is required", 400);
       }
-      return await logRepo.getLogsByUserId(userId);
+      return await logRepo.getLogsByUserIdWithPagination(
+        userId,
+        paginationParams,
+        filterParams
+      );
     } catch (error) {
       throw new CustomError("Failed to retrieve user logs", 500);
     }

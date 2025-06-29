@@ -5,6 +5,7 @@ import {
   getUserPermissionsService,
   updateUserPermissionsService,
 } from "../../services/user/user.service";
+import { getPaginationParams, getFilterParams } from "../../utils/pagination";
 
 export const getAllUsersController = async (
   req: Request,
@@ -12,8 +13,10 @@ export const getAllUsersController = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const users = await getAllUsersService();
-    res.status(200).json({ users });
+    const paginationParams = getPaginationParams(req.query);
+    const filterParams = getFilterParams(req.query);
+    const result = await getAllUsersService(paginationParams, filterParams);
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }

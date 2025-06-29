@@ -6,6 +6,7 @@ import roomRepo from "../../modules/room/room.repo";
 import { createBookingValidator } from "../../modules/booking/booking.validator";
 import userRepo from "../../modules/user/user.repo";
 import LogService from "../log/log.service";
+import { PaginationParams, FilterParams } from "../../utils/pagination";
 
 const getAvailableSlots = (
   room: RoomInterface,
@@ -76,9 +77,15 @@ const isSlotAvailable = (
   return !hasOverlap;
 };
 
-export const getAllBookingsService = async () => {
+export const getAllBookingsService = async (
+  paginationParams: PaginationParams,
+  filterParams: FilterParams
+) => {
   try {
-    const bookings = await bookingRepo.getAllBookings();
+    const bookings = await bookingRepo.getAllBookingsWithPagination(
+      paginationParams,
+      filterParams
+    );
     return bookings;
   } catch (error) {
     throw new CustomError("Failed to retrieve bookings", 500);
@@ -134,21 +141,20 @@ export const getBookingByRoomIdAndDateService = async (
   }
 };
 
-export const getBookingsByUserIdService = async (userId: string) => {
+export const getBookingsByUserIdService = async (
+  userId: string,
+  paginationParams: PaginationParams,
+  filterParams: FilterParams
+) => {
   try {
-    if (!userId) {
-      throw new CustomError("User ID is required", 400);
-    }
-    const bookings = await bookingRepo.findBookingsByUserId(userId);
-    if (!bookings || bookings.length === 0) {
-      throw new CustomError("No bookings found for the specified user", 404);
-    }
+    const bookings = await bookingRepo.getBookingsByUserIdWithPagination(
+      userId,
+      paginationParams,
+      filterParams
+    );
     return bookings;
   } catch (error) {
-    if (error instanceof CustomError) {
-      throw error;
-    }
-    throw new CustomError("Failed to retrieve bookings by user ID", 500);
+    throw new CustomError("Failed to retrieve user bookings", 500);
   }
 };
 

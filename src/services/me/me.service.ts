@@ -5,6 +5,7 @@ import { CustomError } from "../../utils/custom-error";
 import LogService from "../log/log.service";
 import bookingRepo from "../../modules/booking/booking.repo";
 import logRepo from "../../modules/logs/logs.repo";
+import { PaginationParams, FilterParams } from "../../utils/pagination";
 
 export const getProfileService = async (userId: string) => {
   try {
@@ -65,25 +66,40 @@ export const updateProfileService = async (
   }
 };
 
-export const getBookingsByUserIdService = async (userId: string) => {
+export const getBookingsByUserIdService = async (
+  userId: string,
+  paginationParams: PaginationParams,
+  filterParams: FilterParams
+) => {
   try {
     if (!userId) {
       throw new CustomError("User ID is required", 400);
     }
-    const bookings = await bookingRepo.findBookingsByUserId(userId);
-
+    const bookings = await bookingRepo.getBookingsByUserIdWithPagination(
+      userId,
+      paginationParams,
+      filterParams
+    );
     return bookings;
   } catch (error) {
     throw new CustomError("Failed to retrieve bookings by user ID", 500);
   }
 };
 
-export const getLogsByUserIdService = async (userId: string) => {
+export const getLogsByUserIdService = async (
+  userId: string,
+  paginationParams: PaginationParams,
+  filterParams: FilterParams
+) => {
   try {
     if (!userId) {
       throw new CustomError("User ID is required", 400);
     }
-    const logs = await logRepo.getLogsByUserId(userId);
+    const logs = await logRepo.getLogsByUserIdWithPagination(
+      userId,
+      paginationParams,
+      filterParams
+    );
     return logs;
   } catch (error) {
     throw new CustomError("Failed to retrieve user logs", 500);

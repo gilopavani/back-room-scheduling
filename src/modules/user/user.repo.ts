@@ -4,7 +4,13 @@ import {
   EditUser,
 } from "../../interfaces/User.interface";
 import { User, UserPassword, Address } from "../../database/models";
-import { Transaction } from "sequelize";
+import { Transaction, Op } from "sequelize";
+import {
+  PaginationParams,
+  FilterParams,
+  createPaginationResult,
+  PaginationResult,
+} from "../../utils/pagination";
 
 const userRepo = {
   getAllUsers: async (): Promise<UserAddress[]> => {
@@ -16,6 +22,60 @@ const userRepo = {
         },
       ],
     });
+  },
+
+  getAllUsersWithPagination: async (
+    paginationParams: PaginationParams,
+    filterParams: FilterParams
+  ): Promise<PaginationResult<UserAddress>> => {
+    const { page = 1, limit = 10 } = paginationParams;
+    const {
+      search,
+      startDate,
+      endDate,
+      sortBy = "createdAt",
+      sortOrder = "DESC",
+    } = filterParams;
+    const offset = (page - 1) * limit;
+
+    const whereClause: any = {};
+
+    if (search) {
+      whereClause[Op.or] = [
+        { name: { [Op.iLike]: `%${search}%` } },
+        { lastName: { [Op.iLike]: `%${search}%` } },
+        { email: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+
+    if (startDate && endDate) {
+      whereClause.createdAt = {
+        [Op.between]: [new Date(startDate), new Date(endDate)],
+      };
+    } else if (startDate) {
+      whereClause.createdAt = {
+        [Op.gte]: new Date(startDate),
+      };
+    } else if (endDate) {
+      whereClause.createdAt = {
+        [Op.lte]: new Date(endDate),
+      };
+    }
+
+    const { count, rows } = await User.findAndCountAll({
+      where: whereClause,
+      include: [
+        {
+          model: Address,
+          as: "address",
+        },
+      ],
+      order: [[sortBy, sortOrder]],
+      limit,
+      offset,
+    });
+
+    return createPaginationResult(rows, count, page, limit);
   },
 
   findUserByEmail: async (email: string): Promise<User | null> => {

@@ -1,9 +1,21 @@
 import userRepo from "../../modules/user/user.repo";
 import { validatePermission } from "../../modules/user/user.validator";
 import { CustomError } from "../../utils/custom-error";
-export const getAllUsersService = async () => {
+import {
+  PaginationParams,
+  FilterParams,
+  createPaginationResult,
+} from "../../utils/pagination";
+
+export const getAllUsersService = async (
+  paginationParams: PaginationParams,
+  filterParams: FilterParams
+) => {
   try {
-    const users = await userRepo.getAllUsers();
+    const users = await userRepo.getAllUsersWithPagination(
+      paginationParams,
+      filterParams
+    );
     return users;
   } catch (error) {
     throw new CustomError("Failed to retrieve users", 500);

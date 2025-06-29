@@ -7,7 +7,6 @@ import {
 import {
   getAllLogsController,
   getLogsByUserIdController,
-  getLogsByModuleController,
   getMyLogsController,
 } from "../controllers/logs/logs.controller";
 
@@ -32,15 +31,6 @@ router.get(
   requireAdmin,
   async (req, res, next) => {
     getLogsByUserIdController(req, res, next);
-  }
-);
-
-router.get(
-  "/module/:module",
-  authMiddleware,
-  requirePermission("logs"),
-  async (req, res, next) => {
-    getLogsByModuleController(req, res, next);
   }
 );
 

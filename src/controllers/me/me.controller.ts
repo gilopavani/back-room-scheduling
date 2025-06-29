@@ -7,6 +7,7 @@ import {
   getLogsByUserIdService,
 } from "../../services/me/me.service";
 import { CustomError } from "../../utils/custom-error";
+import { getPaginationParams, getFilterParams } from "../../utils/pagination";
 
 export const getProfileController = async (
   req: Request,
@@ -74,8 +75,14 @@ export const getBookingsByUserIdController = async (
     if (!userId) {
       throw new CustomError("User ID is required", 400);
     }
-    const bookings = await getBookingsByUserIdService(userId);
-    res.status(200).json({ bookings });
+    const paginationParams = getPaginationParams(req.query);
+    const filterParams = getFilterParams(req.query);
+    const result = await getBookingsByUserIdService(
+      userId,
+      paginationParams,
+      filterParams
+    );
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -92,8 +99,14 @@ export const getLogsByUserIdController = async (
     if (!userId) {
       throw new CustomError("User ID is required", 400);
     }
-    const logs = await getLogsByUserIdService(userId);
-    res.status(200).json({ logs });
+    const paginationParams = getPaginationParams(req.query);
+    const filterParams = getFilterParams(req.query);
+    const result = await getLogsByUserIdService(
+      userId,
+      paginationParams,
+      filterParams
+    );
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import LogService from "../../services/log/log.service";
+import { getPaginationParams, getFilterParams } from "../../utils/pagination";
 
 export const getAllLogsController = async (
   req: Request,
@@ -7,11 +8,10 @@ export const getAllLogsController = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 50;
-
-    const logs = await LogService.getAllLogs(page, limit);
-    res.status(200).json(logs);
+    const paginationParams = getPaginationParams(req.query);
+    const filterParams = getFilterParams(req.query);
+    const result = await LogService.getAllLogs(paginationParams, filterParams);
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -24,22 +24,14 @@ export const getLogsByUserIdController = async (
 ): Promise<void> => {
   try {
     const { userId } = req.params;
-    const logs = await LogService.getLogsByUserId(userId);
-    res.status(200).json({ logs });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getLogsByModuleController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { module } = req.params;
-    const logs = await LogService.getLogsByModule(module);
-    res.status(200).json({ logs });
+    const paginationParams = getPaginationParams(req.query);
+    const filterParams = getFilterParams(req.query);
+    const result = await LogService.getLogsByUserId(
+      userId,
+      paginationParams,
+      filterParams
+    );
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -56,8 +48,14 @@ export const getMyLogsController = async (
       res.status(401).json({ error: "Unauthorized" });
     }
 
-    const logs = await LogService.getLogsByUserId(userId);
-    res.status(200).json({ logs });
+    const paginationParams = getPaginationParams(req.query);
+    const filterParams = getFilterParams(req.query);
+    const result = await LogService.getLogsByUserId(
+      userId,
+      paginationParams,
+      filterParams
+    );
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }

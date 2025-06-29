@@ -8,6 +8,7 @@ import {
   cancellationBookingService,
   confirmBookingService,
 } from "../../services/booking/booking.service";
+import { getPaginationParams, getFilterParams } from "../../utils/pagination";
 
 export const getAllBookingsController = async (
   req: Request,
@@ -15,8 +16,10 @@ export const getAllBookingsController = async (
   next: NextFunction
 ) => {
   try {
-    const bookings = await getAllBookingsService();
-    res.status(200).json(bookings);
+    const paginationParams = getPaginationParams(req.query);
+    const filterParams = getFilterParams(req.query);
+    const result = await getAllBookingsService(paginationParams, filterParams);
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -73,8 +76,14 @@ export const getBookingsByUserIdController = async (
 ) => {
   try {
     const { userId } = req.params;
-    const bookings = await getBookingsByUserIdService(userId);
-    res.status(200).json(bookings);
+    const paginationParams = getPaginationParams(req.query);
+    const filterParams = getFilterParams(req.query);
+    const result = await getBookingsByUserIdService(
+      userId,
+      paginationParams,
+      filterParams
+    );
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
