@@ -64,6 +64,10 @@ export const signInService = async (userData: Auth) => {
     throw new CustomError("User not found", 404);
   }
 
+  if (user.role !== "user") {
+    throw new CustomError("Only regular users can sign in", 403);
+  }
+
   const userPassword = await authRepo.getUserPassword(user.id);
   if (!userPassword) {
     throw new CustomError("User password not found", 404);
@@ -80,6 +84,8 @@ export const signInService = async (userData: Auth) => {
     userId: user.id,
     email: user.email,
     role: user.role,
+    name: user.name,
+    lastName: user.lastName,
     canViewLogs: user.canViewLogs,
     canManageScheduling: user.canManageScheduling,
   };
@@ -98,4 +104,71 @@ export const signInService = async (userData: Auth) => {
   );
 
   return { accessToken };
+};
+
+export const signInServiceAdmin = async (userData: Auth) => {
+  const { error } = validateSignIn(userData);
+  if (error) {
+    throw new CustomError(error.message, 400);
+  }
+
+  const user = await authRepo.findUserByEmail(userData.email);
+
+  if (!user) {
+    throw new CustomError("User not found", 404);
+  }
+
+  if (user.role !== "admin") {
+    throw new CustomError("Only admin users can sign in", 403);
+  }
+
+  const userPassword = await authRepo.getUserPassword(user.id);
+  if (!userPassword) {
+    throw new CustomError("User password not found", 404);
+  }
+  const isPasswordValid = compareSync(
+    userData.password,
+    userPassword.passwordHash
+  );
+  if (!isPasswordValid) {
+    throw new CustomError("Email or password is invalid", 401);
+  }
+
+  const payload = {
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+    name: user.name,
+    lastName: user.lastName,
+    canViewLogs: user.canViewLogs,
+    canManageScheduling: user.canManageScheduling,
+  };
+
+  LogService.logActivity(
+    user.id,
+    "account",
+    "Login",
+    `User ${user.email} signed in successfully`,
+    undefined
+  );
+
+  console.log("jwr", config.JWT_ACCESS_TOKEN_SECRET);
+
+  const accessToken = await generateJWT(
+    payload,
+    config.JWT_ACCESS_TOKEN_SECRET as string
+  );
+
+  return { accessToken };
+};
+
+export const checkMailExistsService = async (email: string) => {
+  const user = await authRepo.findUserByEmail(email);
+  if (!user) {
+    throw new CustomError("User not found", 404);
+  }
+  if (user.role !== "user") {
+    throw new CustomError("Only regular users can check email", 403);
+  }
+  return { exists: true };
 };

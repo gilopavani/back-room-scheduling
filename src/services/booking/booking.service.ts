@@ -46,11 +46,20 @@ const getAvailableSlots = (
   return available;
 };
 
+const isValidTimeFormat = (time: string): boolean => {
+  const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+  return timeRegex.test(time);
+};
+
 const isSlotAvailable = (
   room: RoomInterface,
   bookings: BookingInterface[],
   desiredTime: string
 ): boolean => {
+  if (!isValidTimeFormat(desiredTime)) {
+    return false;
+  }
+
   const { startTime, endTime, timeBlock } = room;
   const [h0, m0] = startTime.split(":").map(Number);
   const [h1, m1] = endTime.split(":").map(Number);
@@ -62,6 +71,13 @@ const isSlotAvailable = (
   const desiredEnd = desiredStart + timeBlock;
 
   if (desiredStart < startMinutes || desiredEnd > endMinutes) {
+    return false;
+  }
+
+  const blockIndex = Math.floor((desiredStart - startMinutes) / timeBlock);
+  const expectedSlotStart = startMinutes + blockIndex * timeBlock;
+
+  if (desiredStart !== expectedSlotStart) {
     return false;
   }
 
@@ -167,6 +183,10 @@ export const createBookingService = async (
       throw new CustomError(error.message, 400);
     }
 
+    if (!isValidTimeFormat(bookingData.time)) {
+      throw new CustomError("Invalid time format. Use HH:MM format", 400);
+    }
+
     const room = await roomRepo.findRoomById(bookingData.roomId);
     if (!room) {
       throw new CustomError("Room not found", 404);
@@ -183,7 +203,10 @@ export const createBookingService = async (
       date
     );
     if (!isSlotAvailable(room, bookings, bookingData.time)) {
-      throw new CustomError("Requested time slot is not available", 409);
+      throw new CustomError(
+        "Requested time slot is not available or invalid",
+        409
+      );
     }
     bookingData.status = "pending";
     const newBooking = await bookingRepo.createBooking(bookingData);
@@ -234,7 +257,7 @@ export const cancellationBookingService = async (
       throw new CustomError("Booking is already cancelled", 400);
     }
     booking.status = "cancelled";
-    await bookingRepo.updateBooking(bookingId, booking);
+    await bookingRepo.updateBookingStatus(bookingId, "cancelled");
     LogService.logActivity(
       booking.userId,
       "booking",
@@ -267,7 +290,7 @@ export const confirmBookingService = async (
       throw new CustomError("Booking is not in pending status", 400);
     }
     booking.status = "confirmed";
-    const updatedBooking = await bookingRepo.updateBooking(bookingId, booking);
+    await bookingRepo.updateBookingStatus(bookingId, "confirmed");
     LogService.logActivity(
       booking.userId,
       "booking",
@@ -275,9 +298,6 @@ export const confirmBookingService = async (
       `Booking with ID ${bookingId} has been confirmed`,
       undefined
     );
-    if (!updatedBooking) {
-      throw new CustomError("Failed to update booking status", 500);
-    }
     return { status: "confirmed" };
   } catch (error) {
     if (error instanceof CustomError) {

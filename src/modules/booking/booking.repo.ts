@@ -67,26 +67,24 @@ const bookingRepo = {
 
   updateBookingStatus: async (
     id: string,
-    status: "pending" | "confirmed" | "cancelled",
-    transaction?: Transaction
+    status: "pending" | "confirmed" | "cancelled"
   ): Promise<Booking | null> => {
     const booking = await Booking.findByPk(id);
     if (!booking) {
       return null;
     }
-    return await booking.update({ status }, { transaction });
+    return await booking.update({ status });
   },
 
   updateBooking: async (
     id: string,
-    bookingData: Partial<BookingInterface>,
-    transaction?: Transaction
+    bookingData: Partial<BookingInterface>
   ): Promise<Booking | null> => {
     const booking = await Booking.findByPk(id);
     if (!booking) {
       return null;
     }
-    return await booking.update(bookingData, { transaction });
+    return await booking.update(bookingData);
   },
 
   getAllBookingsWithPagination: async (
@@ -94,57 +92,44 @@ const bookingRepo = {
     filterParams: FilterParams
   ): Promise<PaginationResult<Booking>> => {
     const { page = 1, limit = 10 } = paginationParams;
-    const {
-      search,
-      startDate,
-      endDate,
-      sortBy = "date",
-      sortOrder = "DESC",
-    } = filterParams;
+    const { search, date, sortBy = "date", sortOrder = "DESC" } = filterParams;
     const offset = (page - 1) * limit;
 
     const whereClause: any = {};
+
+    if (date) {
+      const targetDate = new Date(date);
+      const nextDay = new Date(targetDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+
+      whereClause.date = {
+        [Op.gte]: targetDate.toISOString().split("T")[0],
+        [Op.lt]: nextDay.toISOString().split("T")[0],
+      };
+    }
+
+    if (search) {
+      whereClause[Op.or] = [
+        { "$user.name$": { [Op.like]: `%${search}%` } },
+        { "$user.last_name$": { [Op.like]: `%${search}%` } },
+        { "$room.number$": { [Op.like]: `%${search}%` } },
+      ];
+    }
+
     const includeClause = [
       {
         model: User,
         as: "user",
-        attributes: ["name", "lastName"],
-        where: search
-          ? {
-              [Op.or]: [
-                { name: { [Op.iLike]: `%${search}%` } },
-                { lastName: { [Op.iLike]: `%${search}%` } },
-              ],
-            }
-          : undefined,
-        required: search ? true : false,
+        attributes: ["name", "lastName", "role"],
+        required: false,
       },
       {
         model: Room,
         as: "room",
         attributes: ["number"],
-        where: search
-          ? {
-              number: { [Op.iLike]: `%${search}%` },
-            }
-          : undefined,
         required: false,
       },
     ];
-
-    if (startDate && endDate) {
-      whereClause.date = {
-        [Op.between]: [startDate, endDate],
-      };
-    } else if (startDate) {
-      whereClause.date = {
-        [Op.gte]: startDate,
-      };
-    } else if (endDate) {
-      whereClause.date = {
-        [Op.lte]: endDate,
-      };
-    }
 
     const { count, rows } = await Booking.findAndCountAll({
       where: whereClause,
@@ -153,6 +138,8 @@ const bookingRepo = {
       limit,
       offset,
       distinct: true,
+      subQuery: false,
+      logging: console.log, // opcional, para debugar SQL
     });
 
     return createPaginationResult(rows, count, page, limit);
@@ -164,44 +151,46 @@ const bookingRepo = {
     filterParams: FilterParams
   ): Promise<PaginationResult<Booking>> => {
     const { page = 1, limit = 10 } = paginationParams;
-    const {
-      search,
-      startDate,
-      endDate,
-      sortBy = "date",
-      sortOrder = "DESC",
-    } = filterParams;
+    const { search, date, sortBy = "date", sortOrder = "DESC" } = filterParams;
     const offset = (page - 1) * limit;
 
     const whereClause: any = { userId };
 
-    if (startDate && endDate) {
+    if (date) {
+      const targetDate = new Date(date);
+      const nextDay = new Date(targetDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+
       whereClause.date = {
-        [Op.between]: [startDate, endDate],
+        [Op.gte]: targetDate.toISOString().split("T")[0],
+        [Op.lt]: nextDay.toISOString().split("T")[0],
       };
-    } else if (startDate) {
-      whereClause.date = {
-        [Op.gte]: startDate,
-      };
-    } else if (endDate) {
-      whereClause.date = {
-        [Op.lte]: endDate,
-      };
+    }
+
+    if (search) {
+      whereClause[Op.or] = [
+        { "$user.name$": { [Op.like]: `%${search}%` } },
+        { "$user.last_name$": { [Op.like]: `%${search}%` } },
+        { "$room.number$": { [Op.like]: `%${search}%` } },
+      ];
     }
 
     const includeClause = [
       {
+        model: User,
+        as: "user",
+        attributes: ["name", "lastName", "role"],
+        required: false,
+      },
+      {
         model: Room,
         as: "room",
         attributes: ["number"],
-        where: search
-          ? {
-              number: { [Op.iLike]: `%${search}%` },
-            }
-          : undefined,
-        required: search ? true : false,
+        required: false,
       },
     ];
+
+    console.log({ sortBy, sortOrder });
 
     const { count, rows } = await Booking.findAndCountAll({
       where: whereClause,
@@ -209,6 +198,9 @@ const bookingRepo = {
       order: [[sortBy, sortOrder]],
       limit,
       offset,
+      distinct: true,
+      subQuery: false,
+      logging: console.log, // opcional, para debugar SQL
     });
 
     return createPaginationResult(rows, count, page, limit);

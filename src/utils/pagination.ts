@@ -48,8 +48,7 @@ export const createPaginationResult = <T>(
 
 export interface FilterParams {
   search?: string;
-  startDate?: string;
-  endDate?: string;
+  date?: string;
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
 }
@@ -57,8 +56,7 @@ export interface FilterParams {
 export const getFilterParams = (query: any): FilterParams => {
   return {
     search: query.search || undefined,
-    startDate: query.startDate || undefined,
-    endDate: query.endDate || undefined,
+    date: query.date || undefined,
     sortBy: query.sortBy || undefined,
     sortOrder: (query.sortOrder === "DESC" ? "DESC" : "ASC") as "ASC" | "DESC",
   };

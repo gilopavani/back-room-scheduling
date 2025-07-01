@@ -31,8 +31,7 @@ const userRepo = {
     const { page = 1, limit = 10 } = paginationParams;
     const {
       search,
-      startDate,
-      endDate,
+      date,
       sortBy = "createdAt",
       sortOrder = "DESC",
     } = filterParams;
@@ -48,17 +47,14 @@ const userRepo = {
       ];
     }
 
-    if (startDate && endDate) {
+    if (date) {
+      const targetDate = new Date(date);
+      const nextDay = new Date(targetDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+
       whereClause.createdAt = {
-        [Op.between]: [new Date(startDate), new Date(endDate)],
-      };
-    } else if (startDate) {
-      whereClause.createdAt = {
-        [Op.gte]: new Date(startDate),
-      };
-    } else if (endDate) {
-      whereClause.createdAt = {
-        [Op.lte]: new Date(endDate),
+        [Op.gte]: targetDate,
+        [Op.lt]: nextDay,
       };
     }
 

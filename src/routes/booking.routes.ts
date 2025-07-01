@@ -20,7 +20,7 @@ router.get("", authMiddleware, requireAdmin, async (req, res, next) => {
   getAllBookingsController(req, res, next);
 });
 
-router.get(
+router.post(
   "/free/:id",
   authMiddleware,
   requirePermission("scheduling"),
