@@ -76,3 +76,21 @@ export const updateUserPermissionsService = async (
     throw new CustomError("Failed to update user permissions", 500);
   }
 };
+
+export const changeUserStatusService = async (
+  userId: string,
+  status: "active" | "inactive"
+) => {
+  try {
+    if (!userId) {
+      throw new CustomError("User ID is required", 400);
+    }
+    const updatedUser = await userRepo.changeUserStatus(userId, status);
+    if (!updatedUser) {
+      throw new CustomError("Failed to change user status", 404);
+    }
+    return updatedUser;
+  } catch (error) {
+    throw new CustomError("Failed to change user status", 500);
+  }
+};

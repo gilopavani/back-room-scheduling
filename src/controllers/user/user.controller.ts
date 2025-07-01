@@ -4,6 +4,7 @@ import {
   getUserByIdService,
   getUserPermissionsService,
   updateUserPermissionsService,
+  changeUserStatusService,
 } from "../../services/user/user.service";
 import { getPaginationParams, getFilterParams } from "../../utils/pagination";
 
@@ -59,6 +60,21 @@ export const updateUserPermissionsController = async (
     const userId = req.params.userId;
     const permissions = req.body.permissions;
     const updatedUser = await updateUserPermissionsService(userId, permissions);
+    res.status(200).json({ updatedUser });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changeUserStatusController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.params.userId;
+    const { status } = req.body;
+    const updatedUser = await changeUserStatusService(userId, status);
     res.status(200).json({ updatedUser });
   } catch (error) {
     next(error);

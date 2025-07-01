@@ -64,6 +64,10 @@ export const signInService = async (userData: Auth) => {
     throw new CustomError("User not found", 404);
   }
 
+  if (user.status !== "active") {
+    throw new CustomError("User is not active", 403);
+  }
+
   if (user.role !== "user") {
     throw new CustomError("Only regular users can sign in", 403);
   }
@@ -118,6 +122,10 @@ export const signInServiceAdmin = async (userData: Auth) => {
     throw new CustomError("User not found", 404);
   }
 
+  if (user.status !== "active") {
+    throw new CustomError("User is not active", 403);
+  }
+
   if (user.role !== "admin") {
     throw new CustomError("Only admin users can sign in", 403);
   }
@@ -151,8 +159,6 @@ export const signInServiceAdmin = async (userData: Auth) => {
     `User ${user.email} signed in successfully`,
     undefined
   );
-
-  console.log("jwr", config.JWT_ACCESS_TOKEN_SECRET);
 
   const accessToken = await generateJWT(
     payload,

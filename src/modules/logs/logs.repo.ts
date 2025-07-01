@@ -1,6 +1,6 @@
 import { Log, User } from "../../database/models";
 import { LogInterface } from "../../interfaces/Log.interface";
-import { Transaction, Op } from "sequelize";
+import { Transaction, Op, fn, col, where } from "sequelize";
 import {
   PaginationParams,
   FilterParams,
@@ -35,23 +35,25 @@ const logRepo = {
         model: User,
         as: "user",
         attributes: ["name", "lastName", "email"],
-        where: search
-          ? {
-              [Op.or]: [
-                { name: { [Op.iLike]: `%${search}%` } },
-                { lastName: { [Op.iLike]: `%${search}%` } },
-                { email: { [Op.iLike]: `%${search}%` } },
-              ],
-            }
-          : undefined,
         required: false,
       },
     ];
 
     if (search) {
+      const searchLower = `%${search.toLowerCase()}%`;
+
       whereClause[Op.or] = [
-        { activity: { [Op.iLike]: `%${search}%` } },
-        { module: { [Op.iLike]: `%${search}%` } },
+        { activity: { [Op.like]: searchLower } },
+        { module: { [Op.like]: searchLower } },
+        where(fn("LOWER", col("user.name")), {
+          [Op.like]: searchLower,
+        }),
+        where(fn("LOWER", col("user.last_name")), {
+          [Op.like]: searchLower,
+        }),
+        where(fn("LOWER", col("user.email")), {
+          [Op.like]: searchLower,
+        }),
       ];
     }
 
@@ -94,10 +96,30 @@ const logRepo = {
 
     const whereClause: any = { userId };
 
+    const includeClause = [
+      {
+        model: User,
+        as: "user",
+        attributes: ["name", "lastName", "email"],
+        required: false,
+      },
+    ];
+
     if (search) {
+      const searchLower = `%${search.toLowerCase()}%`;
+
       whereClause[Op.or] = [
-        { activity: { [Op.iLike]: `%${search}%` } },
-        { module: { [Op.iLike]: `%${search}%` } },
+        { activity: { [Op.like]: searchLower } },
+        { module: { [Op.like]: searchLower } },
+        where(fn("LOWER", col("user.name")), {
+          [Op.like]: searchLower,
+        }),
+        where(fn("LOWER", col("user.last_name")), {
+          [Op.like]: searchLower,
+        }),
+        where(fn("LOWER", col("user.email")), {
+          [Op.like]: searchLower,
+        }),
       ];
     }
 
@@ -114,6 +136,7 @@ const logRepo = {
 
     const { count, rows } = await Log.findAndCountAll({
       where: whereClause,
+      include: includeClause,
       order: [[sortBy, sortOrder]],
       limit,
       offset,

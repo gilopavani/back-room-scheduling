@@ -4,7 +4,7 @@ import {
   EditUser,
 } from "../../interfaces/User.interface";
 import { User, UserPassword, Address } from "../../database/models";
-import { Transaction, Op } from "sequelize";
+import { Op, fn, col, where, literal, Transaction } from "sequelize";
 import {
   PaginationParams,
   FilterParams,
@@ -40,10 +40,18 @@ const userRepo = {
     const whereClause: any = {};
 
     if (search) {
+      const searchLower = `%${search.toLowerCase()}%`;
+
       whereClause[Op.or] = [
-        { name: { [Op.iLike]: `%${search}%` } },
-        { lastName: { [Op.iLike]: `%${search}%` } },
-        { email: { [Op.iLike]: `%${search}%` } },
+        where(fn("LOWER", col("User.name")), {
+          [Op.like]: searchLower,
+        }),
+        where(fn("LOWER", col("User.last_name")), {
+          [Op.like]: searchLower,
+        }),
+        where(fn("LOWER", col("User.email")), {
+          [Op.like]: searchLower,
+        }),
       ];
     }
 
@@ -203,6 +211,19 @@ const userRepo = {
       }
       throw error;
     }
+  },
+
+  changeUserStatus: async (
+    userId: string,
+    status: "active" | "inactive"
+  ): Promise<User | null> => {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return null;
+    }
+    user.status = status;
+    await user.save();
+    return user;
   },
 };
 

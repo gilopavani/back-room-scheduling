@@ -6,6 +6,7 @@ import {
   getUserByIdController,
   getUserPermissionsController,
   updateUserPermissionsController,
+  changeUserStatusController,
 } from "../controllers/user/user.controller";
 
 const router = express.Router();
@@ -33,6 +34,15 @@ router.patch(
   requireAdmin,
   async (req, res, next) => {
     updateUserPermissionsController(req, res, next);
+  }
+);
+
+router.patch(
+  "/:userId/status",
+  authMiddleware,
+  requireAdmin,
+  async (req, res, next) => {
+    changeUserStatusController(req, res, next);
   }
 );
 

@@ -139,7 +139,7 @@ const bookingRepo = {
       offset,
       distinct: true,
       subQuery: false,
-      logging: console.log, // opcional, para debugar SQL
+      logging: console.log,
     });
 
     return createPaginationResult(rows, count, page, limit);
@@ -190,8 +190,6 @@ const bookingRepo = {
       },
     ];
 
-    console.log({ sortBy, sortOrder });
-
     const { count, rows } = await Booking.findAndCountAll({
       where: whereClause,
       include: includeClause,
@@ -200,7 +198,7 @@ const bookingRepo = {
       offset,
       distinct: true,
       subQuery: false,
-      logging: console.log, // opcional, para debugar SQL
+      logging: console.log,
     });
 
     return createPaginationResult(rows, count, page, limit);
