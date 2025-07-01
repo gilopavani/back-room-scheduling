@@ -45,15 +45,28 @@ export const updateProfileService = async (
     if (!userId) {
       throw new CustomError("User ID is required", 400);
     }
-    if (userData.password && userData.password.length < 6) {
-      throw new CustomError("Password must be at least 6 characters long", 400);
+
+    // Validar se senha foi fornecida e se tem pelo menos 6 caracteres
+    if (userData.password && userData.password.trim() !== "") {
+      if (userData.password.length < 6) {
+        throw new CustomError(
+          "Password must be at least 6 characters long",
+          400
+        );
+      }
+      // Hash da senha apenas se foi fornecida
+      const passwordHash = await hash(userData.password, 10);
+      userData.password = passwordHash;
+    } else {
+      // Remove a senha do objeto se não foi fornecida ou está vazia
+      userData.password = "";
     }
-    const passwordHash = await hash(userData.password, 10);
-    userData.password = passwordHash;
+
     const updatedUser = await userRepo.updateUserProfile(userId, userData);
     if (!updatedUser) {
       throw new CustomError("Failed to update user profile", 404);
     }
+
     LogService.logActivity(
       userId,
       "account",
@@ -62,6 +75,9 @@ export const updateProfileService = async (
     );
     return updatedUser;
   } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
     throw new CustomError("Failed to update user profile", 500);
   }
 };

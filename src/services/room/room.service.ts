@@ -1,6 +1,8 @@
 import { CustomError } from "../../utils/custom-error";
 import roomRepo from "../../modules/room/room.repo";
+import bookingRepo from "../../modules/booking/booking.repo";
 import { RoomInterface } from "../../interfaces/room.interface";
+import LogService from "../log/log.service";
 import {
   createRoomValidator,
   updateRoomValidator,
@@ -54,12 +56,56 @@ export const updateRoomService = async (roomId: string, roomData: any) => {
       throw new CustomError(error.message, 400);
     }
 
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    const pendingBookings = await bookingRepo.findBookingsByRoomIdAndStatus(
+      roomId,
+      ["pending"]
+    );
+
+    const approvedBookingsFromToday =
+      await bookingRepo.findBookingsByRoomIdStatusAndDate(
+        roomId,
+        ["confirmed"],
+        currentDate
+      );
+
+    const bookingsToCancel = [...pendingBookings, ...approvedBookingsFromToday];
+
+    if (bookingsToCancel.length > 0) {
+      const bookingIds = bookingsToCancel.map((booking) => booking.id);
+      await bookingRepo.cancelMultipleBookings(bookingIds);
+
+      bookingsToCancel.forEach((booking) => {
+        LogService.logActivity(
+          booking.userId,
+          "booking",
+          "Cancelamento automático por modificação de sala",
+          `Booking cancelado automaticamente devido à modificação da sala ${roomId}`,
+          undefined
+        );
+      });
+    }
+
     const updatedRoom = await roomRepo.updateRoom(roomId, roomData);
     if (!updatedRoom) {
       throw new CustomError("Room not found or failed to update", 404);
     }
+
+    LogService.logActivity(
+      "system",
+      "booking",
+      "Modificação de sala",
+      `Sala ${roomId} modificada. ${bookingsToCancel.length} bookings cancelados automaticamente`,
+      undefined
+    );
+
     return updatedRoom;
   } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
     throw new CustomError("Failed to update room", 500);
   }
 };

@@ -203,5 +203,81 @@ const bookingRepo = {
 
     return createPaginationResult(rows, count, page, limit);
   },
+
+  findBookingsByRoomIdAndStatus: async (
+    roomId: string,
+    statuses: ("pending" | "confirmed" | "cancelled")[]
+  ): Promise<Booking[]> => {
+    return await Booking.findAll({
+      where: {
+        roomId,
+        status: {
+          [Op.in]: statuses,
+        },
+      },
+    });
+  },
+
+  findBookingsByRoomIdStatusAndDate: async (
+    roomId: string,
+    statuses: ("pending" | "confirmed" | "cancelled")[],
+    fromDate: Date
+  ): Promise<Booking[]> => {
+    return await Booking.findAll({
+      where: {
+        roomId,
+        status: {
+          [Op.in]: statuses,
+        },
+        date: {
+          [Op.gte]: fromDate,
+        },
+      },
+    });
+  },
+
+  findConflictingBookings: async (
+    roomId: string,
+    date: Date | string,
+    time: string,
+    excludeBookingId?: string
+  ): Promise<Booking[]> => {
+    const whereClause: any = {
+      roomId,
+      date,
+      time,
+      status: {
+        [Op.in]: ["pending", "confirmed"],
+      },
+    };
+
+    if (excludeBookingId) {
+      whereClause.id = {
+        [Op.ne]: excludeBookingId,
+      };
+    }
+
+    return await Booking.findAll({
+      where: whereClause,
+    });
+  },
+
+  cancelMultipleBookings: async (
+    bookingIds: string[],
+    transaction?: Transaction
+  ): Promise<number> => {
+    const [updatedCount] = await Booking.update(
+      { status: "cancelled" },
+      {
+        where: {
+          id: {
+            [Op.in]: bookingIds,
+          },
+        },
+        transaction,
+      }
+    );
+    return updatedCount;
+  },
 };
 export default bookingRepo;

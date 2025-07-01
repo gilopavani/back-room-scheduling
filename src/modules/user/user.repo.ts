@@ -163,10 +163,12 @@ const userRepo = {
       if (!user) {
         return null;
       }
-      user.name = userData.user.name || user.name;
-      user.lastName = userData.user.lastName || user.lastName;
-      user.email = userData.user.email;
+      // Atualizar dados do usuário
+      if (userData.user.name) user.name = userData.user.name;
+      if (userData.user.lastName) user.lastName = userData.user.lastName;
+      if (userData.user.email) user.email = userData.user.email;
       await user.save({ transaction });
+
       let updatedAddress: Address | undefined;
       if (userData.address) {
         const address = await Address.findOne({
@@ -174,18 +176,19 @@ const userRepo = {
           transaction,
         });
         if (address) {
-          address.cep = userData.address.cep || address.cep;
-          address.number = userData.address.number || address.number;
-          address.street = userData.address.street || address.street;
-          address.neighborhood =
-            userData.address.neighborhood || address.neighborhood;
-          address.city = userData.address.city || address.city;
-          address.state = userData.address.state || address.state;
+          if (userData.address.cep) address.cep = userData.address.cep;
+          if (userData.address.number) address.number = userData.address.number;
+          if (userData.address.street) address.street = userData.address.street;
+          if (userData.address.neighborhood)
+            address.neighborhood = userData.address.neighborhood;
+          if (userData.address.city) address.city = userData.address.city;
+          if (userData.address.state) address.state = userData.address.state;
           await address.save({ transaction });
           updatedAddress = address;
         }
       }
-      if (userData.password) {
+      // Atualizar senha apenas se foi fornecida e não está vazia
+      if (userData.password && userData.password.trim() !== "") {
         const userPassword = await UserPassword.findOne({
           where: { userId: user.id },
           transaction,
@@ -205,10 +208,7 @@ const userRepo = {
       await transaction.commit();
       return updatedUser;
     } catch (error) {
-      if (sequelize) {
-        const transaction: Transaction = await sequelize.transaction();
-        await transaction.rollback();
-      }
+      await transaction.rollback();
       throw error;
     }
   },

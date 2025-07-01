@@ -46,9 +46,20 @@ interface UserAddress {
 }
 
 interface EditUser {
-  user: User;
-  address: Address;
-  password: string;
+  user: {
+    name: string;
+    lastName: string;
+    email: string;
+  };
+  address: {
+    cep: string;
+    number: string;
+    street: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+  };
+  password?: string;
 }
 
 export { User, UserAddress, CreateUser, EditUser };

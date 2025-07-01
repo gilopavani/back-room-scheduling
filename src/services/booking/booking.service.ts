@@ -289,15 +289,40 @@ export const confirmBookingService = async (
     if (booking.status !== "pending") {
       throw new CustomError("Booking is not in pending status", 400);
     }
+
+    const conflictingBookings = await bookingRepo.findConflictingBookings(
+      booking.roomId,
+      booking.date,
+      booking.time,
+      bookingId
+    );
+
+    if (conflictingBookings.length > 0) {
+      const conflictingBookingIds = conflictingBookings.map((b) => b.id);
+      await bookingRepo.cancelMultipleBookings(conflictingBookingIds);
+
+      conflictingBookings.forEach((conflictBooking) => {
+        LogService.logActivity(
+          conflictBooking.userId,
+          "booking",
+          "Cancelamento automático por conflito",
+          `Booking cancelado automaticamente devido à aprovação de outro booking para o mesmo horário`,
+          undefined
+        );
+      });
+    }
+
     booking.status = "confirmed";
     await bookingRepo.updateBookingStatus(bookingId, "confirmed");
+
     LogService.logActivity(
       booking.userId,
       "booking",
       "Confirmação de agendamento",
-      `Booking with ID ${bookingId} has been confirmed`,
+      `Booking with ID ${bookingId} has been confirmed. ${conflictingBookings.length} conflicting bookings were cancelled`,
       undefined
     );
+
     return { status: "confirmed" };
   } catch (error) {
     if (error instanceof CustomError) {
