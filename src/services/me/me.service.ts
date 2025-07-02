@@ -46,7 +46,6 @@ export const updateProfileService = async (
       throw new CustomError("User ID is required", 400);
     }
 
-    // Validar se senha foi fornecida e se tem pelo menos 6 caracteres
     if (userData.password && userData.password.trim() !== "") {
       if (userData.password.length < 6) {
         throw new CustomError(
@@ -54,11 +53,9 @@ export const updateProfileService = async (
           400
         );
       }
-      // Hash da senha apenas se foi fornecida
       const passwordHash = await hash(userData.password, 10);
       userData.password = passwordHash;
     } else {
-      // Remove a senha do objeto se não foi fornecida ou está vazia
       userData.password = "";
     }
 

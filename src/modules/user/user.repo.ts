@@ -163,7 +163,6 @@ const userRepo = {
       if (!user) {
         return null;
       }
-      // Atualizar dados do usuário
       if (userData.user.name) user.name = userData.user.name;
       if (userData.user.lastName) user.lastName = userData.user.lastName;
       if (userData.user.email) user.email = userData.user.email;
@@ -187,7 +186,6 @@ const userRepo = {
           updatedAddress = address;
         }
       }
-      // Atualizar senha apenas se foi fornecida e não está vazia
       if (userData.password && userData.password.trim() !== "") {
         const userPassword = await UserPassword.findOne({
           where: { userId: user.id },
