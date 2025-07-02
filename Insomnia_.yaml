@@ -1,0 +1,1036 @@
+type: collection.insomnia.rest/5.0
+name: Agendamento de Salas
+meta:
+  id: wrk_394971c7ee0e473bbbf58caa80819f8d
+  created: 1750800074442
+  modified: 1750800074442
+  description: ""
+collection:
+  - name: Auth
+    meta:
+      id: fld_9937cba441fc4a898eff954ff1ac8f15
+      created: 1750800136840
+      modified: 1750800136840
+      sortKey: -1750800136840
+      description: ""
+    children:
+      - url: "{{ _.url }}/auth/signin"
+        name: signin user
+        meta:
+          id: req_055d6bb27fb142b3a4aba1e416f7d369
+          created: 1750800139757
+          modified: 1751412866183
+          isPrivate: false
+          description: ""
+          sortKey: -1750800139757
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email": "joao.silva@email.com",
+            	"password": "minhasenha123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/auth/signup"
+        name: singup
+        meta:
+          id: req_e8d693a51bbf4036bb037e99ea373137
+          created: 1750800656045
+          modified: 1750885156062
+          isPrivate: false
+          description: ""
+          sortKey: -1750800656045
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "user": {
+                "name": "Angelo",
+                "lastName": "Pavani",
+                "email": "angelopav@gmail.com",
+                "role": "admin",
+                "status": "active",
+                "canViewLogs": false,
+                "canManageScheduling": true
+              },
+              "address": {
+                "cep": "01234-567",
+                "number": "123",
+                "street": "Rua das Flores",
+                "neighborhood": "Centro",
+                "city": "São Paulo",
+                "state": "SP"
+              },
+              "password": "minhasenha123",
+              "confirmPassword": "minhasenha123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/auth/admin"
+        name: signin admin
+        meta:
+          id: req_ca661df8a2424924a48bc461b6584594
+          created: 1751233112279
+          modified: 1751233122630
+          isPrivate: false
+          description: ""
+          sortKey: -1750492875586
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email": "admin@gmail.com",
+            	"password": "minhasenha123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/auth/check-mail"
+        name: Check mail
+        meta:
+          id: req_44718ea2b2d74cae9b8778523b406a30
+          created: 1751333405662
+          modified: 1751335024535
+          isPrivate: false
+          description: ""
+          sortKey: -1750339243500.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email": "adminx@gmail.com"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Users
+    meta:
+      id: fld_f922dfcc85684f19a142b39adefa5bbd
+      created: 1750881549487
+      modified: 1750881549487
+      sortKey: -1750881549487
+      description: ""
+    children:
+      - url: "{{ _.url }}/user"
+        name: Get all Users
+        meta:
+          id: req_26e00e55dc4741e99d18de9a08e13e63
+          created: 1750881555693
+          modified: 1751374727436
+          isPrivate: false
+          description: ""
+          sortKey: -1750881555693
+        method: GET
+        parameters:
+          - id: pair_b6b5975f681348359b0e32dd4447b86b
+            name: search
+            value: angel
+            description: ""
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_4860a44b2a1d4e03b60934e82a5e2212
+          - id: pair_9ac4409de1d449cc871f6c0b1acf938f
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/user/20ca4c0a-7c69-4168-b186-5758e9c77668"
+        name: Get User by Id
+        meta:
+          id: req_e8e200ca94eb40c39c6cc39c72cfd5cc
+          created: 1750885189563
+          modified: 1750885362224
+          isPrivate: false
+          description: ""
+          sortKey: -1750841105869
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_4860a44b2a1d4e03b60934e82a5e2212
+          - id: pair_9ac4409de1d449cc871f6c0b1acf938f
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/user/20ca4c0a-7c69-4168-b186-5758e9c77668/permissions"
+        name: Get Permission by User Id
+        meta:
+          id: req_ec09d309085e4c6dac859f27d0ab4916
+          created: 1750885824372
+          modified: 1750885830933
+          isPrivate: false
+          description: ""
+          sortKey: -1750820880957
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_4860a44b2a1d4e03b60934e82a5e2212
+          - id: pair_9ac4409de1d449cc871f6c0b1acf938f
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/user/:userId/permissions"
+        name: Update User Permission by ID
+        meta:
+          id: req_a6caba5e221d483f9c028138cea7ed4d
+          created: 1750886323635
+          modified: 1751374089895
+          isPrivate: false
+          description: ""
+          sortKey: -1750810768501
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"permissions": {
+                "canViewLogs": true,
+                "canManageScheduling": true
+            	}
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_4860a44b2a1d4e03b60934e82a5e2212
+          - id: pair_9ac4409de1d449cc871f6c0b1acf938f
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: userId
+            value: a1e3783e-2f4f-4cd5-8d96-c0bce8627609
+      - url: "{{ _.url }}/user/:userId/status"
+        name: Update User Status by ID
+        meta:
+          id: req_429ceb282f3a441c8a0d7906494fef90
+          created: 1751373722352
+          modified: 1751373943209
+          isPrivate: false
+          description: ""
+          sortKey: -1750805712273
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"status": "inactive"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_4860a44b2a1d4e03b60934e82a5e2212
+          - id: pair_9ac4409de1d449cc871f6c0b1acf938f
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: userId
+            value: a1e3783e-2f4f-4cd5-8d96-c0bce8627609
+  - name: Me
+    meta:
+      id: fld_183c0f7b212d400b82769a68799c472e
+      created: 1750943791517
+      modified: 1750943791517
+      sortKey: -1750943791517
+      description: ""
+    children:
+      - url: "{{ _.url }}/me"
+        name: Get User Profile by Token
+        meta:
+          id: req_8d5b0ebbd5664152b27ae6ba338fbb0a
+          created: 1750943794632
+          modified: 1751408227191
+          isPrivate: false
+          description: ""
+          sortKey: -1750943822965
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_eacc00379f664f6795e4871eb7f0ea1e
+          - id: pair_ad468da9f81e4705b9aa6058e36f221a
+            name: Authorization
+            value: "{{ _.accessTokenUser }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/me/permission"
+        name: Get User Permission by Token
+        meta:
+          id: req_e9c52358e77d4be5919c5cbce6203474
+          created: 1750943820481
+          modified: 1750944510793
+          isPrivate: false
+          description: ""
+          sortKey: -1750943822915
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_f8dfb7db2f87418cafb3555013f38c74
+          - id: pair_0f1d73da9b8f446c854147fe627a4bb8
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/me"
+        name: Edit User Profile
+        meta:
+          id: req_45d082d398ba4085bb4e67802b81577e
+          created: 1750943822865
+          modified: 1751408544849
+          isPrivate: false
+          description: ""
+          sortKey: -1750943822865
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            		"name": "João",
+            		"lastName": "Silva",
+            		"role": "user",
+            		"status": "active",
+            		"email": "joao.silva@email.com",
+            		"address": {
+            			"cep": "01234-567",
+            			"number": "123",
+            			"street": "Rua das Floresx",
+            			"neighborhood": "Centro",
+            			"city": "São Paulo",
+            			"state": "SP"
+            		}
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+            id: pair_d4114be7eb1846a2966ee36579693349
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_1c867dc6df6645baa1be6805150b9817
+          - id: pair_f2dc6577eea240729fd7655405c2d84b
+            name: Authorization
+            value: "{{ _.accessTokenUser }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/me/logs"
+        name: Get User Logs
+        meta:
+          id: req_32ff5e9dd6fd4441b4df4743ba540645
+          created: 1750969527007
+          modified: 1751400608855
+          isPrivate: false
+          description: ""
+          sortKey: -1750943822940
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_eacc00379f664f6795e4871eb7f0ea1e
+          - id: pair_ad468da9f81e4705b9aa6058e36f221a
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/me/bookings"
+        name: Get User Bookings
+        meta:
+          id: req_f66235ee2ebf48bda5d0f80c9f235a15
+          created: 1750969537700
+          modified: 1751340432709
+          isPrivate: false
+          description: ""
+          sortKey: -1750943822927.5
+        method: GET
+        parameters:
+          - id: pair_053e622eabd94a82991e44c33eeac248
+            name: search
+            value: "10"
+            description: ""
+            disabled: false
+          - id: pair_6a8c333f6254427a97e99abb1d5bdd67
+            name: sortBy
+            value: date
+            description: ""
+            disabled: false
+          - id: pair_0373627029b84ecc92b14ac6da00cc3f
+            name: sortOrder
+            value: DESC
+            description: ""
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_eacc00379f664f6795e4871eb7f0ea1e
+          - id: pair_ad468da9f81e4705b9aa6058e36f221a
+            name: Authorization
+            value: "{{ _.accessTokenUser }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Room
+    meta:
+      id: fld_4b51f5020eee4bb6869498b39409db09
+      created: 1750948128900
+      modified: 1750948128900
+      sortKey: -1750948128900
+      description: ""
+    children:
+      - url: "{{ _.url }}/room"
+        name: Get all Rooms
+        meta:
+          id: req_b9a6a5aff6934c4b8584ff4a36584f4a
+          created: 1750948133456
+          modified: 1750948172149
+          isPrivate: false
+          description: ""
+          sortKey: -1750948133456
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_9f6bb65c58314ef1abbf5aa477631a07
+          - id: pair_9519c2b43bff4824aebaed031d886c30
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/room/:roomid"
+        name: Get Room by Id
+        meta:
+          id: req_057f6f3986d84be698885f61fdc6be80
+          created: 1750949111022
+          modified: 1751339012173
+          isPrivate: false
+          description: ""
+          sortKey: -1750945978210.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_9f6bb65c58314ef1abbf5aa477631a07
+          - id: pair_9519c2b43bff4824aebaed031d886c30
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: roomid
+            value: 31810c89-cbf5-4818-87f3-9515434fcdfc
+      - url: "{{ _.url }}/room/"
+        name: Create Room
+        meta:
+          id: req_d437d7d1ac9b46ceaa71519f3920bfe4
+          created: 1750949144948
+          modified: 1751325373721
+          isPrivate: false
+          description: ""
+          sortKey: -1750944900587.75
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "number": "104",
+              "startTime": "08:00",
+              "endTime": "07:00",
+              "timeBlock": 10
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_9f6bb65c58314ef1abbf5aa477631a07
+          - id: pair_9519c2b43bff4824aebaed031d886c30
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/room/:id"
+        name: Edit Room
+        meta:
+          id: req_231629882800480e83c4e1f4b21bd0d6
+          created: 1750949480025
+          modified: 1750957292341
+          isPrivate: false
+          description: ""
+          sortKey: -1750944361776.375
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "number": "101",
+              "startTime": "08:00",
+              "endTime": "18:00",
+              "timeBlock": 30
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_9f6bb65c58314ef1abbf5aa477631a07
+          - id: pair_9519c2b43bff4824aebaed031d886c30
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: 3e9095f9-2a54-4aab-932c-a1cd72f87334
+  - name: Booking
+    meta:
+      id: fld_b6d4c2eb69c84af8ad890c78b6478f05
+      created: 1750957037491
+      modified: 1750957037491
+      sortKey: -1750957037491
+      description: ""
+    children:
+      - url: "{{ _.url }}/booking"
+        name: Get All Bookings
+        meta:
+          id: req_3fcfc43ce63b48f2a6713c83b6ef0464
+          created: 1750957047672
+          modified: 1751340405190
+          isPrivate: false
+          description: ""
+          sortKey: -1750957047672
+        method: GET
+        parameters:
+          - id: pair_77729b74ac8a4de69b2474f36ec202a3
+            name: limit
+            value: "10"
+            description: ""
+            disabled: false
+          - id: pair_c810cdfb64c446b0aa3238ad0a4982fa
+            name: search
+            value: ""
+            description: ""
+            disabled: true
+          - id: pair_da92b0e787634c668e0614140246c045
+            name: sortBy
+            value: date
+            description: ""
+            disabled: false
+          - id: pair_e61b84b112384a17a5899c1ab6f4f290
+            name: sortOrder
+            value: ASC
+            description: ""
+            disabled: false
+          - id: pair_bc6fca519ae34aaea916ad7d3f117bad
+            name: date
+            value: 2025-06-27
+            description: ""
+            disabled: true
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_ca4ae7bc2ad146f29848a56ad39198ec
+          - id: pair_cdb8fbfe8a41431d8e1071098a48da17
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/booking/date/:roomId/"
+        name: Get Booking for Date and RoomId
+        meta:
+          id: req_6b00d77883a849858fdac60804d73d17
+          created: 1750957090385
+          modified: 1750961901017
+          isPrivate: false
+          description: ""
+          sortKey: -1750952590564
+        method: GET
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"date": "2025-06-27T00:00:00.000Z"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_ca4ae7bc2ad146f29848a56ad39198ec
+          - id: pair_cdb8fbfe8a41431d8e1071098a48da17
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: roomId
+            value: 3e9095f9-2a54-4aab-932c-a1cd72f87334
+      - url: "{{ _.url }}/booking/free/:id"
+        name: Get Free Booking for Date and RoomId
+        meta:
+          id: req_fc802a61204a4bb38b2ec68386fbd6f7
+          created: 1750957764359
+          modified: 1751339109304
+          isPrivate: false
+          description: ""
+          sortKey: -1750950362010
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"date": "2025-06-27T00:00:00.000Z"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+            id: pair_ba9bbfd5e5ac478da2b06241a2aea195
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_ca4ae7bc2ad146f29848a56ad39198ec
+          - id: pair_cdb8fbfe8a41431d8e1071098a48da17
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: true
+          - id: pair_a5ee9f42f58a4f7aab6e985d88ab19e1
+            name: Authorization
+            value: "{{ _.accessTokenUser }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: 31810c89-cbf5-4818-87f3-9515434fcdfc
+      - url: "{{ _.url }}/booking/user/:userId"
+        name: Get All Bookings by userId
+        meta:
+          id: req_ceb24792f5834ab089a687e84922bbf8
+          created: 1750957895735
+          modified: 1750957925812
+          isPrivate: false
+          description: ""
+          sortKey: -1750954819118
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_ca4ae7bc2ad146f29848a56ad39198ec
+          - id: pair_cdb8fbfe8a41431d8e1071098a48da17
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: userId
+            value: a1e3783e-2f4f-4cd5-8d96-c0bce8627609
+      - url: "{{ _.url }}/booking"
+        name: Create Bookings
+        meta:
+          id: req_efe2a010e28a450e84125a6beb14c32e
+          created: 1750957935116
+          modified: 1751337684861
+          isPrivate: false
+          description: ""
+          sortKey: -1750950361910
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "date": "2025-06-27",
+              "time": "17:00",
+              "userId": "a1e3783e-2f4f-4cd5-8d96-c0bce8627609",
+              "roomId": "e0a7c8a1-e7cd-4527-b40c-eef80d930e4b"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_ca4ae7bc2ad146f29848a56ad39198ec
+          - id: pair_cdb8fbfe8a41431d8e1071098a48da17
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/booking/cancel/:bookingId"
+        name: Cancel Bookings
+        meta:
+          id: req_2107b610fae24989a9856deb9f6bcdb6
+          created: 1751312111211
+          modified: 1751312459078
+          isPrivate: false
+          description: ""
+          sortKey: -1750949247683
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_ca4ae7bc2ad146f29848a56ad39198ec
+          - id: pair_cdb8fbfe8a41431d8e1071098a48da17
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: bookingId
+            value: 1b929848-2f72-4146-b908-9b2085a6feee
+      - url: "{{ _.url }}/booking/confirm/:bookingId"
+        name: Confirm Bookings
+        meta:
+          id: req_e671f33b1cb34866a9068e8da2afa061
+          created: 1751312393098
+          modified: 1751337038310
+          isPrivate: false
+          description: ""
+          sortKey: -1750948690569.5
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_ca4ae7bc2ad146f29848a56ad39198ec
+          - id: pair_cdb8fbfe8a41431d8e1071098a48da17
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: bookingId
+            value: 1b929848-2f72-4146-b908-9b2085a6feee
+  - name: Logs
+    meta:
+      id: fld_cd6e767c4db640feb375c7b760777d17
+      created: 1750968790638
+      modified: 1750968790638
+      sortKey: -1750968790638
+      description: ""
+    children:
+      - url: "{{ _.url }}/log"
+        name: Get all Logs (ADM)
+        meta:
+          id: req_ff34a67ee7f245ac844bed9e0dd01168
+          created: 1750968814733
+          modified: 1751415863780
+          isPrivate: false
+          description: ""
+          sortKey: -1750968814733
+        method: GET
+        parameters:
+          - id: pair_ed1a6e8e0598489dbd98ccd7090e1a6e
+            name: search
+            value: ange
+            description: ""
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_a8f7dbeb43c84a8280da48c50a7de02e
+          - id: pair_81eb022dc37448fc8b914ac7d3338e83
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/log/user/:userId"
+        name: Get Logs by userId (ADM)
+        meta:
+          id: req_159b2c94cb7142ca959c4ca2da6a02f8
+          created: 1751415897180
+          modified: 1751415934395
+          isPrivate: false
+          description: ""
+          sortKey: -1750962931202.5
+        method: GET
+        parameters:
+          - id: pair_55956d9ab06b46369d2b33528d92726d
+            name: ""
+            value: ""
+            description: ""
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+            id: pair_a8f7dbeb43c84a8280da48c50a7de02e
+          - id: pair_81eb022dc37448fc8b914ac7d3338e83
+            name: Authorization
+            value: "{{ _.accessToken }}"
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: userId
+            value: 499d47ac-673d-44c4-ba55-dbaf775665ce
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_4c8c3749ae8d02a3d62e26cb0cca97020810a805
+    created: 1750800074446
+    modified: 1750800074446
+environments:
+  name: Base Environment
+  meta:
+    id: env_4c8c3749ae8d02a3d62e26cb0cca97020810a805
+    created: 1750800074444
+    modified: 1751336241213
+    isPrivate: false
+  data:
+    accessToken: Bearer {% response 'body', 'req_ca661df8a2424924a48bc461b6584594',
+      'b64::JC5hY2Nlc3NUb2tlbg==::46b', 'never', 60 %}
+    accessTokenUser: Bearer {% response 'body',
+      'req_055d6bb27fb142b3a4aba1e416f7d369', 'b64::JC5hY2Nlc3NUb2tlbg==::46b',
+      'never', 60 %}
+  subEnvironments:
+    - name: local
+      meta:
+        id: env_4dad4781d8db465382c4a645f6e4059a
+        created: 1750800086989
+        modified: 1751230955050
+        isPrivate: false
+        sortKey: 1750800086989
+      data:
+        url: http://localhost:3001/api
+    - name: Prod
+      meta:
+        id: env_42b6abf0c7a94d10a85c1468883d071d
+        created: 1751412738724
+        modified: 1751412835877
+        isPrivate: false
+        sortKey: 1751412738724
+      data:
+        url: https://api.angelopavani.com.br/api
